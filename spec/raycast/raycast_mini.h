@@ -15,6 +15,22 @@
 
 # include <math.h>
 
+# ifndef WIDTH
+#  define WIDTH 640
+# endif
+
+# ifndef HEIGHT
+#  define HEIGHT 480
+# endif
+
+# ifndef TILE_SIZE
+#  define TILE_SIZE 64
+# endif
+
+# ifndef PI
+#  define PI 3.1415
+# endif
+
 typedef struct s_vec
 {
 	double	x;
@@ -48,12 +64,12 @@ typedef struct s_ray
 	double	wall_bottom;
 }				t_ray;
 
-// typedef struct s_data
-// {
-// 	t_player	player;
-// 	 t_input		input;
-// 	t_minimap	minimap;
-// 	t_ray		ray[WIDTH];
-// }				t_data;
+typedef struct s_data
+{
+	t_player	player;
+	//  t_input	input;
+	t_map_size	minimap;
+	t_ray		ray[WIDTH];
+}				t_data;
 
 #endif

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "../include/cub3D.h"
+// #include "../../include/cub3D.h"
 #include "raycast_mini.h"
 
 #include <stdio.h>
@@ -22,7 +22,115 @@
 // #define screenWidth 610
 // #define screenHeight 180
 
+int worldMap[mapHeight][mapWidth]=
+{
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, //0
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,'E',0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,1,1,1,1,1,0,0,0,0,1,0,1,0,1,0,0,0,1},
+  {1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1}, //5
+  {1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1},
+  {1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,1,1,0,1,1,0,0,0,0,1,0,1,0,1,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}, //10
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}, //15
+  {1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,1,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,1,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,1,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}, //20
+  {1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} //25
+};
 
+t_vec	get_player_pos(int i, int j)
+{
+	t_vec	pos;
+
+	pos.x = i;
+	pos.y = j;
+	printf("pos.x = %f\n", pos.x);
+	printf("pos.y = %f\n", pos.y);
+	return (pos);
+}
+
+double	get_player_dir(int i, int j)
+{
+	double	dir;
+
+	dir = 0;
+	if (worldMap[j][i] == 'N')
+		dir = 90 * PI / 180;
+	else if (worldMap[j][i] == 'S')
+		dir = 3 * PI / 2;
+	else if (worldMap[j][i] == 'E')
+		dir = 0;
+	else if (worldMap[j][i] == 'W')
+		dir = PI;
+	return (dir);
+}
+
+t_player	get_initial_player_info(int worldMap[mapHeight][mapWidth], \
+	int tile_size)
+{
+	int			i;
+	int			j;
+	t_player	player;
+
+	j = 0;
+	player.pos.x = 0;
+	player.pos.y = 0;
+	player.dir = 0;
+	player.pos_modif.x = 0;
+	player.pos_modif.y = 0;
+	player.dir_modif = 0;
+	while (j < mapHeight)
+	{
+		i = 0;
+		while (i < mapWidth)
+		{
+			if (worldMap[j][i] == 'N' || worldMap[j][i] == 'S' || \
+				worldMap[j][i] == 'E' || worldMap[j][i] == 'W')
+			{
+				player.pos = get_player_pos(i, j);
+				player.dir = get_player_dir(i, j);
+				player.pos_modif.x = (player.pos.x + 0.5) * tile_size;
+				player.pos_modif.y = (player.pos.y + 0.5) * tile_size;
+				player.dir_modif = player.dir;
+				return (player);
+			}
+			i++;
+		}
+		j++;
+	}
+	return (player);
+}
+
+void	init_minimap_size(t_map_size *minimap_size)
+{
+	minimap_size->height = HEIGHT;
+	minimap_size->tile_size = HEIGHT / mapHeight;
+	minimap_size->width = minimap_size->tile_size * mapWidth;
+	printf("minimap_height = %d\n", minimap_size->height);
+	printf("minimap_width = %d\n", minimap_size->width);
+	printf("minimap_tile_size = %d\n", minimap_size->tile_size);
+}
+
+void	init_map_size(t_map_size *s_map_size)
+{
+	s_map_size->height = HEIGHT;
+	s_map_size->width = WIDTH;
+	s_map_size->tile_size = TILE_SIZE;
+}
 
 t_vec	get_increment_x_intersec(double ray_dir, int tile_size)
 {
@@ -152,7 +260,7 @@ t_vec	determine_intersec(int worldMap[mapHeight][mapWidth], int tile_size, t_pla
 // the ray is the line from the player to the intersec
 // the intersec is the point where the ray hits the wall
 void	cast_ray(int worldMap[mapHeight][mapWidth], t_player player, \
-	t_minimap minimap)
+	t_map_size minimap)
 {
 	int		i;
 	double	ray_dir;
@@ -187,7 +295,7 @@ int	main(void)
 {
 	t_data		data;
 
-	init_minimap(&(data.minimap));
+	init_minimap_size(&(data.minimap));
 	data.player = get_initial_player_info(worldMap, data.minimap.tile_size);
 	printf("player_pos.x = %f\n", data.player.pos.x);
 	printf("player_pos.y = %f\n", data.player.pos.y);
@@ -196,5 +304,5 @@ int	main(void)
 	printf("player_pos_modified.y = %f\n", data.player.pos_modif.y);
 	printf("player_dir_modified = %f\n", data.player.dir_modif);
 	printf("Below are the intersec points\n");
-	// cast_ray(worldMap, data.player, data.minimap);
+	cast_ray(worldMap, data.player, data.minimap);
 }
