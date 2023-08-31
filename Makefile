@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: eunskim <eunskim@student.42heilbronn.de    +#+  +:+       +#+         #
+#    By: sawang <sawang@student.42heilbronn.de>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/18 14:38:23 by eunskim           #+#    #+#              #
-#    Updated: 2023/08/18 16:25:15 by eunskim          ###   ########.fr        #
+#    Updated: 2023/08/31 17:05:35 by sawang           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,17 +39,61 @@ GNL         := $(LIBGNL_DIR)/get_next_line.a
 
 INCLUDE_DIR := include
 
-HEADERS     := -I $(INCLUDE_DIR) -I $(LIBMLX_DIR)/include/MLX42/ -I $(LIBFT_DIR)
+HEADERS     := -I $(INCLUDE_DIR) -I $(LIBMLX_DIR)/include/MLX42/ -I $(LIBFT_DIR) -I $(LIBGNL_DIR)
 FRAMEWORKS  := -framework Cocoa -framework OpenGL -framework IOKit
 
 SRC_DIR     := src/
 SRC         := \
-main.c \
-test.c
-SRCS = $(addprefix $(SRC_DIR),$(SRC))
+initializer.c \
+hooks.c \
+#render_test.c
+main.c
+
+SRC_DIR_PARSER	:= parser/
+SRC_PARSER      := \
+parser.c \
+parser_texture.c \
+parser_rgb.c \
+parser_map.c \
+parser_map_utils.c \
+parser_map_validity.c \
+parser_utils.c \
+parser_error.c \
+parser_free.c
+
+SRC_DIR_RAYCAST	:= raycast/
+SRC_RAYCAST     := \
+calculate_utils.c \
+hit_point.c \
+raycast.c \
+mock_map.c
+
+SRC_DIR_RENDER	:= render/
+SRC_RENDER      := \
+draw_verti_line.c \
+draw.c \
+render_error_handler.c \
+render.c \
+render_utils.c
+
+SRC_DIR_HOOK	:= hook/
+SRC_HOOK		:= \
+update_player.c
+
+
+
+SRCS := $(addprefix $(SRC_DIR),$(SRC))
+# SRCS_PARSER := $(addprefix $(SRC_DIR_PARSER),$(SRC_PARSER))
+SRCS_RAYCAST := $(addprefix $(SRC_DIR_RAYCAST),$(SRC_RAYCAST))
+SRCS_RENDER := $(addprefix $(SRC_DIR_RENDER),$(SRC_RENDER))
+SRCS_HOOK := $(addprefix $(SRC_DIR_HOOK),$(SRC_HOOK))
 
 OBJ_DIR = obj/
-OBJS = $(patsubst $(SRC_DIR)%.c,$(OBJ_DIR)%.o,$(SRCS))
+OBJS := $(patsubst $(SRC_DIR)%.c,$(OBJ_DIR)$(SRC_DIR)%.o,$(SRCS))
+# OBJS += $(patsubst $(SRC_DIR_PARSER)%.c,$(OBJ_DIR)$(SRC_DIR_PARSER)%.o,$(SRCS_PARSER))
+OBJS += $(patsubst $(SRC_DIR_RAYCAST)%.c,$(OBJ_DIR)$(SRC_DIR_RAYCAST)%.o,$(SRCS_RAYCAST))
+OBJS += $(patsubst $(SRC_DIR_RENDER)%.c,$(OBJ_DIR)$(SRC_DIR_RENDER)%.o,$(SRCS_RENDER))
+OBJS += $(patsubst $(SRC_DIR_HOOK)%.c,$(OBJ_DIR)$(SRC_DIR_HOOK)%.o,$(SRCS_HOOK))
 
 #//= Make Rules =//#
 all: libmlx libft libgnl $(NAME)
@@ -64,10 +108,22 @@ libgnl:
 	@$(MAKE) -C $(LIBGNL_DIR)
 
 $(NAME): $(OBJS)
-	@$(CC) $(CFLAGS) $(OBJS) $(MLX42) $(LIBFT) $(GNL) $(FRAMEWORKS) -o $(NAME) && \
+	@$(CC) $(CFLAGS) $(OBJS) $(MLX42) $(LIBFT) $(GNL) -lglfw $(FRAMEWORKS) -o $(NAME) && \
 	echo "$(BLUE)Compilation of $(CYAN)>>$(NAME)<<$(RESET)$(BLUE) successful!$(RESET)"
 
-$(OBJ_DIR)%.o: $(SRC_DIR)%.c
+$(OBJ_DIR)$(SRC_DIR)%.o: $(SRC_DIR)%.c
+	@mkdir -p $(@D)
+	@$(CC) $(CFLAGS) $(HEADERS) -c $< -o $@
+
+$(OBJ_DIR)$(SRC_DIR_PARSER)%.o: $(SRC_DIR_PARSER)%.c
+	@mkdir -p $(@D)
+	@$(CC) $(CFLAGS) $(HEADERS) -c $< -o $@
+
+$(OBJ_DIR)$(SRC_DIR_RAYCAST)%.o: $(SRC_DIR_RAYCAST)%.c
+	@mkdir -p $(@D)
+	@$(CC) $(CFLAGS) $(HEADERS) -c $< -o $@
+
+$(OBJ_DIR)$(SRC_DIR_RENDER)%.o: $(SRC_DIR_RENDER)%.c
 	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) $(HEADERS) -c $< -o $@
 
@@ -84,5 +140,6 @@ fclean: clean
 	@rm -f $(GNL)
 
 re: fclean all
+
 
 .PHONY: all, clean, fclean, re, libmlx, libft, libgnl

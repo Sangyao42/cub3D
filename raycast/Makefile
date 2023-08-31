@@ -11,6 +11,7 @@ SRC         := \
 			raycast.c \
 			initializer.c \
 			hit_point.c \
+			calculate_utils.c \
 			mock_map.c
 
 all: $(NAME)

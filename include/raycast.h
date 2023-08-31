@@ -6,7 +6,7 @@
 /*   By: sawang <sawang@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 14:41:41 by sawang            #+#    #+#             */
-/*   Updated: 2023/08/22 23:09:06 by sawang           ###   ########.fr       */
+/*   Updated: 2023/08/30 17:11:32 by sawang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,14 @@
 
 # ifndef PI
 #  define PI 3.1415
+# endif
+
+# ifndef FOV
+#  define FOV 60
+# endif
+
+# ifndef DIST_TO_PROJ
+#  define DIST_TO_PROJ WIDTH / 2 / tan(FOV / 2 * PI / 180)
 # endif
 
 # include <math.h>
@@ -42,7 +50,6 @@ typedef struct s_map_size
 	int	tile_size;
 }				t_map_size;
 
-
 typedef struct s_ray
 {
 	double	ray_dir;
@@ -63,17 +70,6 @@ typedef struct s_ray
 // }				t_data;
 
 /**
- * initializations
- */
-
-t_vec	get_player_pos(int i, int j);
-double	get_player_dir(int i, int j);
-t_player	get_initial_player_info(int worldMap[mapHeight][mapWidth], \
-	int tile_size);
-void	init_minimap_size(t_map_size *minimap_size);
-void	init_map_size(t_map_size *map_size);
-
-/**
  * hit_point calculations
  */
 t_vec	get_increment_x_intersec(double ray_dir, int tile_size);
@@ -88,5 +84,12 @@ void	determine_intersec(t_ray *ray, int worldMap[mapHeight][mapWidth], \
 /**
  * raycast
  */
+void	cast_ray(t_ray *rays, int worldMap[mapHeight][mapWidth], t_player player, \
+	t_map_size map_size);
+
+/**
+ * calculate_utils
+ */
+double	calc_dist(double pos_x, double intersec_x, double ray_dir);
 
 #endif
