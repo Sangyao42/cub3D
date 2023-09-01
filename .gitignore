@@ -8,5 +8,6 @@ test/
 .vscode/
 .DS_Store
 cub3D
+cub3D_bonus
 textures/
 map/
