@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_error.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sawang <sawang@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eunskim <eunskim@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/22 19:06:31 by eunskim           #+#    #+#             */
-/*   Updated: 2023/08/31 17:07:17 by sawang           ###   ########.fr       */
+/*   Updated: 2023/09/03 15:04:52 by eunskim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	error_handler_2(t_parser_exit_code error)
 	else if (error == MULTIPLE_PLAYER)
 		ft_putstr_fd("Must have only one player.\n", 2);
 	else if (error == UNCLOSED_MAP)
-		ft_putstr_fd("Map should be surrounded by walls.", 2);
+		ft_putstr_fd("Map should be surrounded by walls.\n", 2);
 	return ;
 }
 
